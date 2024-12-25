@@ -2,6 +2,7 @@
 #include "book.h"
 #include "reader.h"
 #include "search.h"
+#include <windows.h>
 void Menu() {
     printf("\t  +-----------------------欢迎进入-----------------------+\n");
     printf("\t|                     图书借阅管理系统                   |\n");
@@ -39,6 +40,8 @@ int login() {
     return 0;
 }
 int main(void) {
+    SetConsoleOutputCP(65001);
+
     if (!login()) {
         printf("登录失败！\n");
         return 0;
