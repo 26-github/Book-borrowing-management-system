@@ -41,10 +41,12 @@ void searchborrow();
 void searchreaderborrow();
 void searchbookborrow();
 void readermain();
+void borrowmune();
 struct reader *readreader();
 struct borrow *readborrow();
 
 
+//读者信息管理系统目录
 void borrowmune()
 {
     printf("\t+-------------------欢迎进入-------------------+\n");
@@ -69,7 +71,7 @@ void readermain() {
     int choice;
     scanf("%d",&choice);
     while (choice!=0) {
-        switch (choice) {
+        switch (choice) {        //选择功能，输入0退出系统
             case 1:
                 addreader();
                 break;
@@ -94,22 +96,24 @@ void readermain() {
             default:
                 printf("您输入的数字有误，请重新输入！\n");
         }
-        booksmune();
+        borrowmune();
         scanf("%d",&choice);
     }
     printf("\t退出成功！\n");
 }
 
+//读取读者信息，返回对应的链表
 struct reader *readreader() {
     FILE *fp;
+    fp=fopen("reader.txt","r");
+    if (fp==NULL) {       //如果文件不存在，返回NULL
+        printf("没有存储读者信息，请先存储读者信息");
+        printf("\n");
+        return NULL;
+    }
     struct reader *head=NULL;
     struct reader *p=NULL;
     struct reader *q=NULL;
-    fp=fopen("reader.txt","r");
-    if (fp==NULL) {
-        printf("文件打开失败！\n");
-        return NULL;
-    }
     while (!feof(fp)) {
         p=(struct reader *)malloc(sizeof(struct reader));
         if (head==NULL) {
@@ -125,9 +129,8 @@ struct reader *readreader() {
     return head;
 }
 
+//添加读者信息功能函数
 void addreader() {
-    struct reader *head=readreader();
-    struct reader *p=head;
     struct reader *newreader=(struct reader *)malloc(sizeof(struct reader));
     printf("请输入读者编号：");
     scanf("%d",&newreader->readernumber);
@@ -141,27 +144,19 @@ void addreader() {
     scanf("%s",newreader->jobtitle);
     printf("请输入地址：");
     scanf("%s",newreader->address);
-    newreader->next=NULL;
-    if (head==NULL) {
-        head=newreader;
-    } else {
-        while (p->next!=NULL) {
-            p=p->next;
-        }
-        p->next=newreader;
-    }
-    FILE *fp=fopen("reader.txt","w");
-    p=head;
-    while (p!=NULL) {
-        fprintf(fp,"%d %s %s %s %s %s\n",p->readernumber,p->unit,p->name,p->gender,p->jobtitle,p->address);
-        p=p->next;
-    }
+    FILE *fp=fopen("reader.txt","a");
+    fprintf(fp,"%d %s %s %s %s %s\n",newreader->readernumber,newreader->unit,newreader->name,newreader->gender,newreader->jobtitle,newreader->address);
     fclose(fp);
     printf("添加成功！\n");
 }
 
+
+//删除读者信息功能函数
 void deletereader() {
     struct reader *head=readreader();
+    if (head==NULL) {
+        return;
+    }
     struct reader *p=head;
     struct reader *pre=head;
     int readernumber;
@@ -195,8 +190,12 @@ void deletereader() {
     printf("删除成功！\n");
 }
 
+//修改读者信息功能函数
 void changereader() {
     struct reader *head=readreader();
+    if (head==NULL) {
+        return;
+    }
     struct reader *p=head;
     int readernumber;
     int f=1;
@@ -235,16 +234,18 @@ void changereader() {
     printf("修改成功！\n");
 }
 
+//读取借阅信息，返回对应的链表
 struct borrow *readborrow() {
     FILE *fp;
+    fp=fopen("borrow.txt","r");
+    if (fp==NULL) {        //如果文件不存在，返回NULL
+        printf("没有存储借阅信息，请先存储借阅信息");
+        printf("\n");
+        return NULL;
+    }
     struct borrow *head=NULL;
     struct borrow *p=NULL;
     struct borrow *q=NULL;
-    fp=fopen("borrow.txt","r");
-    if (fp==NULL) {
-        printf("文件打开失败！\n");
-        return NULL;
-    }
     while (!feof(fp)) {
         p=(struct borrow *)malloc(sizeof(struct borrow));
         if (head==NULL) {
@@ -260,6 +261,7 @@ struct borrow *readborrow() {
     return head;
 }
 
+//添加借阅信息功能函数
 void addborrow() {
     struct borrow *head=readborrow();
     struct borrow *p=head;
@@ -279,7 +281,7 @@ void addborrow() {
         }
         p->next=newborrow;
     }
-    FILE *fp=fopen("borrow.txt","w");
+    FILE *fp=fopen("borrow.txt","a");
     p=head;
     while (p!=NULL) {
         fprintf(fp,"%d %d %s %s\n",p->readernumber,p->booknumber,p->time);
@@ -289,8 +291,12 @@ void addborrow() {
     printf("添加成功！\n");
 }
 
+//删除借阅信息功能函数
 void deleteborrow() {
     struct borrow *head=readborrow();
+    if (head==NULL) {
+        return;
+    }
     struct borrow *p=head;
     struct borrow *pre=head;
     int booknumber;
@@ -337,8 +343,12 @@ void deleteborrow() {
     printf("删除成功！\n");
 }
 
+//修改借阅信息功能函数
 void changeborrow() {
     struct borrow *head=readborrow();
+    if (head==NULL) {
+        return;
+    }
     struct borrow *p=head;
     int booknumber;
     int f=1;
@@ -371,8 +381,12 @@ void changeborrow() {
     printf("修改成功！\n");
 }
 
+//查询借阅信息功能函数
 void searchborrow() {
     struct borrow *head=readborrow();
+    if (head==NULL) {
+        return;
+    }
     struct borrow *p=head;
     int choice;
     printf("1.指定读者编号\n");
@@ -393,6 +407,9 @@ void searchborrow() {
 
 void searchreaderborrow() {
     struct borrow *head=readborrow();
+    if (head==NULL) {
+        return;
+    }
     struct borrow *p=head;
     int readernumber;
     int f=1;
@@ -416,6 +433,9 @@ void searchreaderborrow() {
 
 void searchbookborrow() {
     struct borrow *head=readborrow();
+    if (head==NULL) {
+        return;
+    }
     struct borrow *p=head;
     int booknumber;
     int f=1;

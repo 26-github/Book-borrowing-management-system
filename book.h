@@ -43,20 +43,20 @@ void deletebookname();;
 void deletebookISBN();
 
 
-
+//图书信息管理系统目录
 void booksmune()
 {
     printf("\t+-------------------欢迎进入-------------------+\n");
-    printf("\t|                图书管理系统                  |\n");
-    printf("\t|                管理员管理系统                |\n");
-    printf("\t|                                              |\n");
-    printf("\t|                1.修改图书信息                |\n");
-    printf("\t|                2.删除图书信息                |\n");
-    printf("\t|                3.添加图书信息                |\n");
-    printf("\t|                4.显示图书信息                |\n");
-    printf("\t|                5.查询指定图书信息             |\n");
-    printf("\t|                0.返回主菜单                  |\n");
-    printf("\t+----------------------------------------------+\n");
+    printf("\t|                图书管理系统                   |\n");
+    printf("\t|                管理员管理系统                 |\n");
+    printf("\t|                                             |\n");
+    printf("\t|                1.修改图书信息                 |\n");
+    printf("\t|                2.删除图书信息                 |\n");
+    printf("\t|                3.添加图书信息                 |\n");
+    printf("\t|                4.显示图书信息                 |\n");
+    printf("\t|                5.查询指定图书信息              |\n");
+    printf("\t|                0.返回主菜单                   |\n");
+    printf("\t+---------------------------------------------+\n");
     printf("\n");
     printf("                 请选择 (0-5):");
 }
@@ -66,7 +66,7 @@ void bookmain() {
     int choice;
     scanf("%d",&choice);
     while (choice!=0) {
-        switch (choice) {
+        switch (choice) {               //选择功能，输入0退出系统
             case 1:
                 changebook();
                 break;
@@ -92,8 +92,13 @@ void bookmain() {
     printf("\t退出成功！\n");
 }
 
+
+//删除图书信息功能函数
 void deletebook() {
     struct books *head=readbooks();
+    if (head==NULL) {
+        return;
+    }
     struct books *p=head;
     int choice;
     printf("1.指定图书编号\n");
@@ -160,7 +165,7 @@ void deletebookpublish() {
         printf("您要找的书不在书库里\n");
         return;
     }
-    FILE *fp=fopen("books","w");
+    FILE *fp=fopen("books.txt","w");
     p=head;
     while(p!=NULL)
     {
@@ -205,7 +210,7 @@ void deletebookauther() {
         printf("您要找的书不在书库里\n");
         return;
     }
-    FILE *fp=fopen("books","w");
+    FILE *fp=fopen("books.txt","w");
     p=head;
     while(p!=NULL)
     {
@@ -221,7 +226,7 @@ void deletebookname() {
     struct books *p=head,*pre=head;
     char name[30];
     int f=1;
-    printf("请输入要修改书的名字：");
+    printf("请输入要删除书的名字：");
     scanf("%s",name);
     while(p!=NULL)
     {
@@ -242,7 +247,7 @@ void deletebookname() {
         printf("您要找的书不在书库里\n");
         return;
     }
-    FILE *fp=fopen("books","w");
+    FILE *fp=fopen("books.txt","w");
     p=head;
     while(p!=NULL)
     {
@@ -258,7 +263,7 @@ void deletebooknumber()
     struct books *head=readbooks();
     struct books *p=head,*pre=head;
     int number,f=1;
-    printf("请输入要修改书的编号：");
+    printf("请输入要删除书的编号：");
     scanf("%d",&number);
     while(p!=NULL)
     {
@@ -279,7 +284,7 @@ void deletebooknumber()
         printf("您要找的书不在书库里\n");
         return;
     }
-    FILE *fp=fopen("books","w");
+    FILE *fp=fopen("books.txt","w");
     p=head;
     while(p!=NULL)
     {
@@ -295,7 +300,7 @@ void deletebookISBN(){
     struct books *p=head,*pre=head;
     int f=1;
     char ISBN[30];
-    printf("请输入要修改书的ISBN：");
+    printf("请输入要删除书的ISBN：");
     scanf("%s",ISBN);
     while(p!=NULL)
     {
@@ -316,7 +321,7 @@ void deletebookISBN(){
         printf("您要找的书不在书库里\n");
         return;
     }
-    FILE *fp=fopen("books","w");
+    FILE *fp=fopen("books.txt","w");
     p=head;
     while(p!=NULL)
     {
@@ -327,9 +332,14 @@ void deletebookISBN(){
     printf("删除成功！\n");
 }
 
+
+//查询图书信息功能函数
 void searchbook()
 {
     struct books *head=readbooks();
+    if (head==NULL) {
+        return;
+    }
     struct books *p=head;
     int choice;
     printf("1.指定图书编号\n");
@@ -512,9 +522,14 @@ void searchbookISBN(){
     }
 }
 
+
+//修改图书信息功能函数
 void changebook()
 {
     struct books *head=readbooks();
+    if (head==NULL) {
+        return;
+    }
     struct books *p=head;
     int choice;
     printf("1.指定图书编号\n");
@@ -584,7 +599,7 @@ void changebookpublish() {
         printf("您要找的书不在书库里\n");
         return;
     }
-    FILE *fp=fopen("books","w");
+    FILE *fp=fopen("books.txt","w");
     p=head;
     while(p!=NULL)
     {
@@ -632,7 +647,7 @@ void changebookauther() {
         printf("您要找的书不在书库里\n");
         return;
     }
-    FILE *fp=fopen("books","w");
+    FILE *fp=fopen("books.txt","w");
     p=head;
     while(p!=NULL)
     {
@@ -672,7 +687,7 @@ void changebookname() {
         printf("您要找的书不在书库里\n");
         return;
     }
-    FILE *fp=fopen("books","w");
+    FILE *fp=fopen("books.txt","w");
     p=head;
     while(p!=NULL)
     {
@@ -712,7 +727,7 @@ void changebooknumber()
         printf("您要找的书不在书库里\n");
         return;
     }
-    FILE *fp=fopen("books","w");
+    FILE *fp=fopen("books.txt","w");
     p=head;
     while(p!=NULL)
     {
@@ -752,7 +767,7 @@ void changebookISBN(){
         printf("您要找的书不在书库里\n");
         return;
     }
-    FILE *fp=fopen("books","w");
+    FILE *fp=fopen("books.txt","w");
     p=head;
     while(p!=NULL)
     {
@@ -762,8 +777,14 @@ void changebookISBN(){
     fclose(fp);
 }
 
+//读取图书信息,得到链表
 struct books* readbooks(){
-    FILE *fp=fopen("books","r");
+    FILE *fp=fopen("books.txt","r");
+    if (fp==NULL) {         //如果文件不存在，返回NULL
+        printf("没有存储书本内容，请先存储书本内容");
+        printf("\n");
+        return NULL;
+    }
     struct books *head=NULL,*pre,*p;
     while(feof(fp)==0)
     {
@@ -784,16 +805,21 @@ struct books* readbooks(){
 }
 
 
-
+//输出所有图书信息
 void printbooks(struct books *head)
 {
     struct books *p=head;
+    if (head==NULL) {
+        return;
+    }
     while(p!=NULL)
     {
         printf("图书编号：%d ISBN号：%s 书名：%s 作者姓名：%s 出版社：%s\n",p->number,p->ISBN,p->name,p->auther,p->publish);
         p=p->next;
     }
 }
+
+//添加图书信息功能函数
 void inputbook() {
     struct books newbook;
     printf("请输入图书编号：");
@@ -806,7 +832,7 @@ void inputbook() {
     scanf("%s",&newbook.auther);
     printf("请输入出版社：");
     scanf("%s",&newbook.publish);
-    FILE *fp=fopen("books","a");
+    FILE *fp=fopen("books.txt","a");
     fprintf(fp,"%d %s %s %s %s\n",newbook.number,newbook.ISBN,newbook.name,newbook.auther,newbook.publish);
     fclose(fp);
 }

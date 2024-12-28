@@ -18,6 +18,8 @@ void searchallbookauther();
 void searchallbookpublish();
 void searchallreaderborrow();
 
+
+//批量查询系统目录
 void searchmune() {
     printf("\t+-------------------欢迎进入-------------------+\n");
     printf("\t|                图书管理系统                  |\n");
@@ -31,11 +33,12 @@ void searchmune() {
     printf("\n");
     printf("                 请选择 (0-3):");
 }
+
 void searchall() {
     int choice;
     searchmune();
     scanf("%d",&choice);
-    switch (choice) {
+    switch (choice) {       //选择功能，输入0退出系统
         case 1:
             searchallbookauther();
             break;
@@ -50,9 +53,12 @@ void searchall() {
     }
 }
 
-
+//查询指定作者的所有图书
 void searchallbookauther() {
     struct books *head=readbooks();
+    if (head==NULL) {
+        return;
+    }
     struct books *p=head;
     char auther[30];
     int f=1;
@@ -77,8 +83,12 @@ void searchallbookauther() {
     }
 }
 
+//查询指定出版社的所有图书
 void searchallbookpublish() {
     struct books *head=readbooks();
+    if (head==NULL) {
+        return;
+    }
     struct books *p=head;
     char publish[30];
     int f=1;
@@ -103,8 +113,12 @@ void searchallbookpublish() {
     }
 }
 
+//查询指定借书证借阅的所有书籍
 void searchallreaderborrow() {
     struct borrow *head=readborrow();
+    if (head==NULL) {
+        return;
+    }
     struct borrow *p=head;
     int readernumber;
     int f=1;
