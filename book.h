@@ -88,6 +88,7 @@ void bookmain() {
 
         }
         booksmune();
+        clearInputBuffer();
         choice = getValidChoice();
     }
     printf("\t退出成功！\n");
@@ -780,7 +781,7 @@ void changebookISBN(){
 
 //读取图书信息,得到链表
 struct books* readbooks(){
-    FILE *fp=fopen("books.txt","r");
+    FILE *fp=fopen("books.txt","r, ccs=UTF-8");
     if (fp==NULL) {         //如果文件不存在，返回NULL
         printf("没有存储书本内容，请先存储书本内容");
         printf("\n");

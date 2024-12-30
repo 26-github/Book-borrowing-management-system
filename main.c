@@ -41,9 +41,33 @@ int login() {
     }
     return 0;
 }
+
+void createInitFile(){
+    FILE *fp = fopen("books.txt", "wb+");
+    if (fp == NULL) {
+        printf("初始化文件创建失败！\n");
+        return;
+    }
+    //添加utf8 bom头
+    fprintf(fp, "%c%c%c", 0xEF, 0xBB, 0xBF);
+    fclose(fp);
+}
+
+void applcationInit(){
+    //检查是否存在books.txt文件
+    FILE *fp = fopen("books.txt", "rb");
+    if (fp == NULL) {
+        printf("初始化文件不存在！\n");
+        printf("正在创建初始化文件...\n");
+        createInitFile();
+    }
+
+
+}
+
 int main(void) {
     SetConsoleOutputCP(65001);
-
+    applcationInit();
     if (!login()) {
         printf("登录失败！\n");
         return 0;
@@ -67,6 +91,7 @@ int main(void) {
 
         }
         Menu();
+        clearInputBuffer();
         choice = getValidChoice();
     }
     printf("\t欢迎下次使用！");
