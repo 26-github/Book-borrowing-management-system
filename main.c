@@ -39,7 +39,6 @@ int login() {
             scanf("%s",password);
         }
     }
-    clearInputBuffer();
     return 0;
 }
 int main(void) {
@@ -50,6 +49,7 @@ int main(void) {
         return 0;
     }
     Menu();
+    clearInputBuffer();
     int choice = getValidChoice();
     while (choice!=0) {           //选择功能，输入0退出系统
         switch (choice) {

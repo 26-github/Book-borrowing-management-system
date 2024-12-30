@@ -88,7 +88,7 @@ void bookmain() {
 
         }
         booksmune();
-        
+        choice = getValidChoice();
     }
     printf("\t退出成功！\n");
 }
@@ -101,14 +101,14 @@ void deletebook() {
         return;
     }
     struct books *p=head;
-    int choice = getValidChoice();
+    int choice ;
     printf("1.指定图书编号\n");
     printf("2.指定ISBM号\n");
     printf("3.指定书名\n");
     printf("4.指定作者姓名\n");
     printf("5.指定出版社\n");
     printf("请输入要删除的图书信息：");
-    
+    choice = getValidChoice();
     switch (choice) {
         case 1:
             deletebooknumber();
@@ -342,14 +342,14 @@ void searchbook()
         return;
     }
     struct books *p=head;
-    int choice = getValidChoice();
+    int choice ;
     printf("1.指定图书编号\n");
     printf("2.指定ISBN号\n");
     printf("3.指定书名\n");
     printf("4.指定作者姓名\n");
     printf("5.指定出版社\n");
     printf("请输入要修改的图书信息：");
-    
+    choice = getValidChoice();
     switch (choice) {
         case 1:
             searchbooknumber();
@@ -532,14 +532,14 @@ void changebook()
         return;
     }
     struct books *p=head;
-    int choice = getValidChoice();
+    int choice ;
     printf("1.指定图书编号\n");
     printf("2.指定ISBN号\n");
     printf("3.指定书名\n");
     printf("4.指定作者姓名\n");
     printf("5.指定出版社\n");
     printf("请输入要修改的图书信息：");
-    
+    choice = getValidChoice();
     switch (choice) {
         case 1:
             changebooknumber();
@@ -842,7 +842,6 @@ int getValidChoice() {
     char line[256];
     char *endptr;
     long choice;
-    clearInputBuffer();
     while (1) {
         if (fgets(line, sizeof(line), stdin) == NULL) {
             return -1;  // 读取失败
