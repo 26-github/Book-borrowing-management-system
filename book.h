@@ -4,6 +4,7 @@
 
 #ifndef BOOKS_H
 #define BOOKS_H
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -41,7 +42,8 @@ void deletebookpublish();
 void deletebookauther();
 void deletebookname();;
 void deletebookISBN();
-
+int getValidChoice();
+void clearInputBuffer();
 
 //图书信息管理系统目录
 void booksmune()
@@ -63,8 +65,7 @@ void booksmune()
 
 void bookmain() {
     booksmune();
-    int choice;
-    scanf("%d",&choice);
+    int choice = getValidChoice();
     while (choice!=0) {
         switch (choice) {               //选择功能，输入0退出系统
             case 1:
@@ -87,7 +88,7 @@ void bookmain() {
 
         }
         booksmune();
-        scanf("%d",&choice);
+        
     }
     printf("\t退出成功！\n");
 }
@@ -100,14 +101,14 @@ void deletebook() {
         return;
     }
     struct books *p=head;
-    int choice;
+    int choice = getValidChoice();
     printf("1.指定图书编号\n");
     printf("2.指定ISBM号\n");
     printf("3.指定书名\n");
     printf("4.指定作者姓名\n");
     printf("5.指定出版社\n");
     printf("请输入要删除的图书信息：");
-    scanf("%d",&choice);
+    
     switch (choice) {
         case 1:
             deletebooknumber();
@@ -341,14 +342,14 @@ void searchbook()
         return;
     }
     struct books *p=head;
-    int choice;
+    int choice = getValidChoice();
     printf("1.指定图书编号\n");
     printf("2.指定ISBN号\n");
     printf("3.指定书名\n");
     printf("4.指定作者姓名\n");
     printf("5.指定出版社\n");
     printf("请输入要修改的图书信息：");
-    scanf("%d",&choice);
+    
     switch (choice) {
         case 1:
             searchbooknumber();
@@ -531,14 +532,14 @@ void changebook()
         return;
     }
     struct books *p=head;
-    int choice;
+    int choice = getValidChoice();
     printf("1.指定图书编号\n");
     printf("2.指定ISBN号\n");
     printf("3.指定书名\n");
     printf("4.指定作者姓名\n");
     printf("5.指定出版社\n");
     printf("请输入要修改的图书信息：");
-    scanf("%d",&choice);
+    
     switch (choice) {
         case 1:
             changebooknumber();
@@ -837,4 +838,50 @@ void inputbook() {
     fclose(fp);
 }
 
+int getValidChoice() {
+    char line[256];
+    char *endptr;
+    long choice;
+    clearInputBuffer();
+    while (1) {
+        if (fgets(line, sizeof(line), stdin) == NULL) {
+            return -1;  // 读取失败
+        }
+
+        // 移除行尾的换行符
+        line[strcspn(line, "\n")] = 0;
+
+        // 跳过前导空白字符
+        char *start = line;
+        while (isspace(*start)) start++;
+
+        // 如果输入为空，继续循环
+        if (*start == '\0') {
+            printf("\n输入为空，请重新输入：\n");
+            continue;
+        }
+
+        // 尝试将输入转换为长整型
+        choice = strtol(start, &endptr, 10);
+
+        // 检查转换是否成功，以及是否有多余字符
+        if (endptr == start || *endptr != '\0') {
+            printf("\n无效输入，请输入一个整数：\n");
+            continue;
+        }
+
+        // 检查是否在int范围内
+        if (choice > INT_MAX || choice < INT_MIN) {
+            printf("\n数字超出范围，请重新输入：\n");
+            continue;
+        }
+
+        return (int)choice;
+    }
+}
+
+void clearInputBuffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
 #endif //BOOKS_H

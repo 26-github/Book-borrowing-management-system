@@ -39,6 +39,7 @@ int login() {
             scanf("%s",password);
         }
     }
+    clearInputBuffer();
     return 0;
 }
 int main(void) {
@@ -49,8 +50,7 @@ int main(void) {
         return 0;
     }
     Menu();
-    int choice;
-    scanf("%d",&choice);
+    int choice = getValidChoice();
     while (choice!=0) {           //选择功能，输入0退出系统
         switch (choice) {
             case 1:
@@ -67,7 +67,7 @@ int main(void) {
 
         }
         Menu();
-        scanf("%d",&choice);
+        choice = getValidChoice();
     }
     printf("\t欢迎下次使用！");
 
