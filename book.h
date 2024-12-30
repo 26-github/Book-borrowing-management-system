@@ -8,6 +8,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <winnls.h>
+
+#define MAX_LENGTH 100
 
 struct books
 {
@@ -44,6 +47,28 @@ void deletebookname();;
 void deletebookISBN();
 int getValidChoice();
 void clearInputBuffer();
+void writeUTF8(FILE *fp, const char *str) {
+    wchar_t wstr[MAX_LENGTH];
+    char utf8[MAX_LENGTH * 4];  // UTF-8 可能需要更多空间
+
+    // 将ANSI字符串转换为宽字符
+    MultiByteToWideChar(CP_ACP, 0, str, -1, wstr, MAX_LENGTH);
+
+    // 将宽字符转换为UTF-8
+    WideCharToMultiByte(CP_UTF8, 0, wstr, -1, utf8, sizeof(utf8), NULL, NULL);
+
+    // 写入UTF-8字符串
+    fprintf(fp, "%s", utf8);
+}
+void readUTF8(char *utf8, char *str, int maxLen) {
+    wchar_t wstr[MAX_LENGTH];
+
+    // 将UTF-8转换为宽字符
+    MultiByteToWideChar(CP_UTF8, 0, utf8, -1, wstr, MAX_LENGTH);
+
+    // 将宽字符转换为ANSI
+    WideCharToMultiByte(CP_ACP, 0, wstr, -1, str, maxLen, NULL, NULL);
+}
 
 //图书信息管理系统目录
 void booksmune()
@@ -780,30 +805,80 @@ void changebookISBN(){
 }
 
 //读取图书信息,得到链表
-struct books* readbooks(){
-    FILE *fp=fopen("books.txt","r, ccs=UTF-8");
-    if (fp==NULL) {         //如果文件不存在，返回NULL
-        printf("没有存储书本内容，请先存储书本内容");
-        printf("\n");
+struct books* readbooks() {
+    FILE *fp = fopen("books.txt", "rb");
+    if (fp == NULL) {
+        printf("没有存储书本内容，请先存储书本内容\n");
         return NULL;
     }
-    struct books *head=NULL,*pre,*p;
-    while(feof(fp)==0)
-    {
-        struct books *p=(struct books*)malloc(sizeof(struct books));
-        if(head==NULL){
-            head=p;
-            fscanf(fp,"%d %s %s %s %s\n",&p->number,p->ISBN,p->name,p->auther,p->publish);
-            p->next=NULL;
-            pre=p;
-        }else {
-            fscanf(fp,"%d %s %s %s %s\n",&p->number,p->ISBN,p->name,p->auther,p->publish);
-            p->next=NULL;
-            pre->next=p;
-            pre=p;
+
+    struct books *head = NULL, *tail = NULL, *p = NULL;
+    char line[MAX_LENGTH * 5];  // 假设 MAX_LENGTH 已定义
+
+    while (fgets(line, sizeof(line), fp) != NULL) {
+        p = (struct books*)malloc(sizeof(struct books));
+        if (p == NULL) {
+            printf("内存分配失败\n");
+            break;
         }
+
+        char *token;
+        char *nextToken = NULL;
+
+        // 读取图书编号
+        token = strtok_s(line, " ", &nextToken);
+        if (token == NULL) {
+            free(p);
+            continue; // 跳过当前行
+        }
+        p->number = atoi(token);
+
+        // 读取ISBN
+        token = strtok_s(NULL, " ", &nextToken);
+        if (token == NULL) {
+            free(p);
+            continue;
+        }
+        strcpy(p->ISBN, token);
+
+
+        // 读取书名
+        token = strtok_s(NULL, " ", &nextToken);
+        if (token == NULL) {
+            free(p);
+            continue;
+        }
+        strcpy(p->name, token);
+        // 读取作者
+        token = strtok_s(NULL, " ", &nextToken);
+        if (token == NULL) {
+            free(p);
+            continue;
+        }
+        strcpy(p->auther, token);
+        // 读取出版社
+        token = strtok_s(NULL, " ", &nextToken);
+        if (token == NULL) {
+            free(p);
+            continue;
+        }
+        strcpy(p->publish, token);
+
+        p->next = NULL;
+
+        if (head == NULL) {
+            head = tail = p;
+        } else {
+            tail->next = p;
+            tail = p;
+        }
+
+        p = NULL;  // 重置 p，防止在下一次循环时重复释放
     }
+
+    fclose(fp);
     return head;
+
 }
 
 
@@ -821,6 +896,7 @@ void printbooks(struct books *head)
     }
 }
 
+
 //添加图书信息功能函数
 void inputbook() {
     struct books newbook;
@@ -834,8 +910,19 @@ void inputbook() {
     scanf("%s",&newbook.auther);
     printf("请输入出版社：");
     scanf("%s",&newbook.publish);
-    FILE *fp=fopen("books.txt","a");
-    fprintf(fp,"%d %s %s %s %s\n",newbook.number,newbook.ISBN,newbook.name,newbook.auther,newbook.publish);
+    FILE *fp=fopen("books.txt","ab+");
+    //把信息用utf8编码写入文件
+    fprintf(fp,"%d ",newbook.number);
+    writeUTF8(fp, newbook.ISBN);
+    fprintf(fp, " ");
+    writeUTF8(fp, newbook.name);
+    fprintf(fp, " ");
+    writeUTF8(fp, newbook.auther);
+    fprintf(fp, " ");
+    writeUTF8(fp, newbook.publish);
+    fprintf(fp, "\n");
+
+
     fclose(fp);
 }
 
@@ -884,4 +971,6 @@ void clearInputBuffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 }
+
+
 #endif //BOOKS_H
