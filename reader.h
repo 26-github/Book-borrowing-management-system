@@ -105,25 +105,85 @@ void readermain() {
 //读取读者信息，返回对应的链表
 struct reader *readreader() {
     FILE *fp;
-    fp=fopen("reader.txt","r");
+    fp=fopen("reader.txt","rb");
     if (fp==NULL) {       //如果文件不存在，返回NULL
         printf("没有存储读者信息，请先存储读者信息");
         printf("\n");
         return NULL;
     }
-    struct reader *head=NULL;
-    struct reader *p=NULL;
-    struct reader *q=NULL;
-    while (!feof(fp)) {
-        p=(struct reader *)malloc(sizeof(struct reader));
-        if (head==NULL) {
-            head=p;
-        } else {
-            q->next=p;
+    char line[MAX_LENGTH * 5]; // 假设 MAX_LENGTH 已定义
+    struct reader *head = NULL, *tail = NULL, *p = NULL;
+    while (fgets(line, sizeof(line), fp) != NULL) {
+        if (strcmp(line, "\0") == 0) {
+            printf("没有存储书本内容，请先存储书本内容\n");
+            return NULL;
         }
-        fscanf(fp,"%d %s %s %s %s %s",&p->readernumber,p->unit,p->name,p->gender,p->jobtitle,p->address);
-        p->next=NULL;
-        q=p;
+        p = (struct books*)malloc(sizeof(struct books));
+        if (p == NULL) {
+            printf("内存分配失败\n");
+            break;
+        }
+
+        char *token;
+        char *nextToken = NULL;
+
+        // 读取读者编号
+        token = strtok_s(line, " ", &nextToken);
+        if (token == NULL) {
+            free(p);
+            continue; // 跳过当前行
+        }
+        p->readernumber = atoi(token);
+
+        // 读取单位
+        token = strtok_s(NULL, " ", &nextToken);
+        if (token == NULL) {
+            free(p);
+            continue;
+        }
+        strcpy(p->unit, token);
+
+
+        // 读取姓名
+        token = strtok_s(NULL, " ", &nextToken);
+        if (token == NULL) {
+            free(p);
+            continue;
+        }
+        strcpy(p->name, token);
+        // 读取性别
+        token = strtok_s(NULL, " ", &nextToken);
+        if (token == NULL) {
+            free(p);
+            continue;
+        }
+        strcpy(p->gender, token);
+        // 读取职称
+        token = strtok_s(NULL, " ", &nextToken);
+        if (token == NULL) {
+            free(p);
+            continue;
+        }
+        strcpy(p->jobtitle, token);
+
+        // 读取地址
+        token = strtok_s(NULL, " ", &nextToken);
+        if (token == NULL) {
+            free(p);
+            continue;
+        }
+        strcpy(p->address, token);
+
+        p->next = NULL;
+
+        if (head == NULL) {
+            head = tail = p;
+        } else {
+            tail->next = p;
+            tail = p;
+        }
+
+        p = NULL;  // 重置 p，防止在下一次循环时重复释放
     }
     fclose(fp);
     return head;
@@ -131,23 +191,34 @@ struct reader *readreader() {
 
 //添加读者信息功能函数
 void addreader() {
-    struct reader *newreader=(struct reader *)malloc(sizeof(struct reader));
+    struct reader newreader;
     printf("请输入读者编号：");
-    scanf("%d",&newreader->readernumber);
+    scanf("%d",&newreader.readernumber);
     printf("请输入单位：");
-    scanf("%s",newreader->unit);
+    scanf("%s",newreader.unit);
     printf("请输入姓名：");
-    scanf("%s",newreader->name);
+    scanf("%s",newreader.name);
     printf("请输入性别：");
-    scanf("%s",newreader->gender);
+    scanf("%s",newreader.gender);
     printf("请输入职称：");
-    scanf("%s",newreader->jobtitle);
+    scanf("%s",newreader.jobtitle);
     printf("请输入地址：");
-    scanf("%s",newreader->address);
-    FILE *fp=fopen("reader.txt","a");
-    fprintf(fp,"%d %s %s %s %s %s\n",newreader->readernumber,newreader->unit,newreader->name,newreader->gender,newreader->jobtitle,newreader->address);
+    scanf("%s",newreader.address);
+    FILE *fp=fopen("reader.txt","ab+");
+    //把信息用utf8编码写入文件
+    fprintf(fp,"%d ",newreader.readernumber);
+    writeUTF8(fp, newreader.unit);
+    fprintf(fp, " ");
+    writeUTF8(fp, newreader.name);
+    fprintf(fp, " ");
+    writeUTF8(fp, newreader.gender);
+    fprintf(fp, " ");
+    writeUTF8(fp, newreader.jobtitle);
+    fprintf(fp, " ");
+    writeUTF8(fp, newreader.address);
+    fprintf(fp, "\n");
+
     fclose(fp);
-    printf("添加成功！\n");
 }
 
 
@@ -238,24 +309,62 @@ void changereader() {
 struct borrow *readborrow() {
     FILE *fp;
     fp=fopen("borrow.txt","r");
+    char line[MAX_LENGTH * 5];  // 假设 MAX_LENGTH 已定义
     if (fp==NULL) {        //如果文件不存在，返回NULL
         printf("没有存储借阅信息，请先存储借阅信息");
         printf("\n");
         return NULL;
     }
-    struct borrow *head=NULL;
-    struct borrow *p=NULL;
-    struct borrow *q=NULL;
-    while (!feof(fp)) {
-        p=(struct borrow *)malloc(sizeof(struct borrow));
-        if (head==NULL) {
-            head=p;
-        } else {
-            q->next=p;
+    struct borrow *head = NULL, *tail = NULL, *p = NULL;
+    while (fgets(line, sizeof(line), fp) != NULL) {
+        if (strcmp(line, "\0") == 0) {
+            printf("没有存储书本内容，请先存储书本内容\n");
+            return NULL;
         }
-        fscanf(fp,"%d %d %s %s",&p->readernumber,&p->booknumber,p->time);
-        p->next=NULL;
-        q=p;
+        p = (struct books*)malloc(sizeof(struct books));
+        if (p == NULL) {
+            printf("内存分配失败\n");
+            break;
+        }
+
+        char *token;
+        char *nextToken = NULL;
+
+        // 读取读者编号
+        token = strtok_s(line, " ", &nextToken);
+        if (token == NULL) {
+            free(p);
+            continue; // 跳过当前行
+        }
+        p->readernumber = atoi(token);
+
+        // 读取图书编号
+        token = strtok_s(line, " ", &nextToken);
+        if (token == NULL) {
+            free(p);
+            continue; // 跳过当前行
+        }
+        p->booknumber = atoi(token);
+
+
+        // 读取借阅时间
+        token = strtok_s(NULL, " ", &nextToken);
+        if (token == NULL) {
+            free(p);
+            continue;
+        }
+        strcpy(p->time, token);
+
+        p->next = NULL;
+
+        if (head == NULL) {
+            head = tail = p;
+        } else {
+            tail->next = p;
+            tail = p;
+        }
+
+        p = NULL;  // 重置 p，防止在下一次循环时重复释放
     }
     fclose(fp);
     return head;
@@ -263,32 +372,23 @@ struct borrow *readborrow() {
 
 //添加借阅信息功能函数
 void addborrow() {
-    struct borrow *head=readborrow();
-    struct borrow *p=head;
-    struct borrow *newborrow=(struct borrow *)malloc(sizeof(struct borrow));
+    struct borrow newborrow;
     printf("请输入读者编号：");
-    scanf("%d",&newborrow->readernumber);
+    scanf("%d",&newborrow.readernumber);
     printf("请输入图书编号：");
-    scanf("%d",&newborrow->booknumber);
+    scanf("%d",&newborrow.booknumber);
     printf("请输入借阅时间：");
-    scanf("%s",newborrow->time);
-    newborrow->next=NULL;
-    if (head==NULL) {
-        head=newborrow;
-    } else {
-        while (p->next!=NULL) {
-            p=p->next;
-        }
-        p->next=newborrow;
-    }
-    FILE *fp=fopen("borrow.txt","a");
-    p=head;
-    while (p!=NULL) {
-        fprintf(fp,"%d %d %s %s\n",p->readernumber,p->booknumber,p->time);
-        p=p->next;
-    }
+    scanf("%s",newborrow.time);
+    FILE *fp=fopen("borrow.txt","ab+");
+    //把信息用utf8编码写入文件
+    fprintf(fp,"%d ",newborrow.readernumber);
+    fprintf(fp, " ");
+    fprintf(fp,"%d ",newborrow.booknumber);
+    fprintf(fp, " ");
+    writeUTF8(fp, newborrow.time);
+    fprintf(fp, "\n");
+
     fclose(fp);
-    printf("添加成功！\n");
 }
 
 //删除借阅信息功能函数

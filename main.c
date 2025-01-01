@@ -42,7 +42,7 @@ int login() {
     return 0;
 }
 
-void createInitFile(){
+void createInitFile1(){
     FILE *fp = fopen("books.txt", "wb+");
     if (fp == NULL) {
         printf("初始化文件创建失败！\n");
@@ -53,13 +53,53 @@ void createInitFile(){
     fclose(fp);
 }
 
-void applcationInit(){
+void createInitFile2(){
+    FILE *fp = fopen("reader.txt", "wb+");
+    if (fp == NULL) {
+        printf("初始化文件创建失败！\n");
+        return;
+    }
+    //添加utf8 bom头
+    fprintf(fp, "%c%c%c", 0xEF, 0xBB, 0xBF);
+    fclose(fp);
+}
+
+void createInitFile3(){
+    FILE *fp = fopen("borrow.txt", "wb+");
+    if (fp == NULL) {
+        printf("初始化文件创建失败！\n");
+        return;
+    }
+    //添加utf8 bom头
+    fprintf(fp, "%c%c%c", 0xEF, 0xBB, 0xBF);
+    fclose(fp);
+}
+
+void applcationInit1(){
     //检查是否存在books.txt文件
     FILE *fp = fopen("books.txt", "rb");
     if (fp == NULL) {
-        printf("初始化文件不存在！\n");
-        printf("正在创建初始化文件...\n");
-        createInitFile();
+        createInitFile1();
+    }
+
+
+}
+
+void applcationInit2(){
+    //检查是否存在reader.txt文件
+    FILE *fp = fopen("reader.txt", "rb");
+    if (fp == NULL) {
+        createInitFile2();
+    }
+
+
+}
+
+void applcationInit3(){
+    //检查是否存在borrow.txt文件
+    FILE *fp = fopen("borrow.txt", "rb");
+    if (fp == NULL) {
+        createInitFile3();
     }
 
 
@@ -67,7 +107,10 @@ void applcationInit(){
 
 int main(void) {
     SetConsoleOutputCP(65001);
-    applcationInit();
+    applcationInit1();
+    applcationInit2();
+    applcationInit3();
+
     if (!login()) {
         printf("登录失败！\n");
         return 0;

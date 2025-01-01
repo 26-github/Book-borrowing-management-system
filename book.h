@@ -816,6 +816,10 @@ struct books* readbooks() {
     char line[MAX_LENGTH * 5];  // 假设 MAX_LENGTH 已定义
 
     while (fgets(line, sizeof(line), fp) != NULL) {
+        if (strcmp(line, "\0") == 0) {
+            printf("没有存储书本内容，请先存储书本内容\n");
+            return NULL;
+        }
         p = (struct books*)malloc(sizeof(struct books));
         if (p == NULL) {
             printf("内存分配失败\n");
