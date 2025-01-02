@@ -17,6 +17,7 @@ void searchall();
 void searchallbookauther();
 void searchallbookpublish();
 void searchallreaderborrow();
+char * getValidChar();
 
 
 //批量查询系统目录
@@ -37,7 +38,7 @@ void searchmune() {
 void searchall() {
     int choice;
     searchmune();
-    scanf("%d",&choice);
+    choice = getValidChoice();
     switch (choice) {       //选择功能，输入0退出系统
         case 1:
             searchallbookauther();
@@ -63,7 +64,8 @@ void searchallbookauther() {
     char auther[30];
     int f=1;
     printf("请输入要查询的作者：");
-    scanf("%s",auther);
+    wscanf(L"%ls", auther);
+    wcstombs(auther, auther, 31);
     while(p!=NULL)
     {
         if(strcmp(p->auther,auther)==0)
@@ -78,7 +80,7 @@ void searchallbookauther() {
         p=p->next;
     }
     if (f) {
-        printf("您要找的书不在书库里\n");
+        printf("书库里没有目标作者\n");
         return;
     }
 }
@@ -108,14 +110,15 @@ void searchallbookpublish() {
         p=p->next;
     }
     if (f) {
-        printf("您要找的书不在书库里\n");
+        printf("书库里没有目标出版社\n");
         return;
     }
 }
 
 //查询指定借书证借阅的所有书籍
 void searchallreaderborrow() {
-    struct borrow *head=readborrow();
+    struct borrow *head;
+    head=readborrow();
     if (head==NULL) {
         return;
     }
@@ -134,8 +137,9 @@ void searchallreaderborrow() {
         p=p->next;
     }
     if (f) {
-        printf("您要找的读者不在借阅信息里\n");
+        printf("库里没有目标读者\n");
         return;
     }
 }
+
 #endif //SEARCH_H

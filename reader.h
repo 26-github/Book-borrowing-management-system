@@ -308,7 +308,7 @@ void changereader() {
 //读取借阅信息，返回对应的链表
 struct borrow *readborrow() {
     FILE *fp;
-    fp=fopen("borrow.txt","r");
+    fp=fopen("borrow.txt","rb");
     char line[MAX_LENGTH * 5];  // 假设 MAX_LENGTH 已定义
     if (fp==NULL) {        //如果文件不存在，返回NULL
         printf("没有存储借阅信息，请先存储借阅信息");
@@ -321,7 +321,7 @@ struct borrow *readborrow() {
             printf("没有存储书本内容，请先存储书本内容\n");
             return NULL;
         }
-        p = (struct books*)malloc(sizeof(struct books));
+        p = (struct borrow*)malloc(sizeof(struct borrow));
         if (p == NULL) {
             printf("内存分配失败\n");
             break;
@@ -339,16 +339,16 @@ struct borrow *readborrow() {
         p->readernumber = atoi(token);
 
         // 读取图书编号
-        token = strtok_s(line, " ", &nextToken);
+        token = strtok_s(NULL, " ", &nextToken);
         if (token == NULL) {
             free(p);
-            continue; // 跳过当前行
+            continue;
         }
         p->booknumber = atoi(token);
 
 
         // 读取借阅时间
-        token = strtok_s(NULL, " ", &nextToken);
+        token = strtok_s(NULL, "\n", &nextToken);
         if (token == NULL) {
             free(p);
             continue;

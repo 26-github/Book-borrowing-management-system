@@ -861,7 +861,7 @@ struct books* readbooks() {
         }
         strcpy(p->auther, token);
         // 读取出版社
-        token = strtok_s(NULL, " ", &nextToken);
+        token = strtok_s(NULL, "\n", &nextToken);
         if (token == NULL) {
             free(p);
             continue;
