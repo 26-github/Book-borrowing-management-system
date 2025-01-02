@@ -49,10 +49,10 @@ struct borrow *readborrow();
 //读者信息管理系统目录
 void borrowmune()
 {
-    printf("\t+-------------------欢迎进入-------------------+\n");
+    printf("\t+-------------------欢迎进入------------------+\n");
     printf("\t|                图书管理系统                  |\n");
     printf("\t|                管理员管理系统                |\n");
-    printf("\t|                                              |\n");
+    printf("\t|                                            |\n");
     printf("\t|                1.增加读者信息                |\n");
     printf("\t|                2.删除读者信息                |\n");
     printf("\t|                3.修改读者信息                |\n");
@@ -61,7 +61,7 @@ void borrowmune()
     printf("\t|                6.修改借阅信息                |\n");
     printf("\t|                7.查询借阅信息                |\n");
     printf("\t|                0.返回主菜单                  |\n");
-    printf("\t+----------------------------------------------+\n");
+    printf("\t+--------------------------------------------+\n");
     printf("\n");
     printf("                 请选择 (0-7):");
 }
@@ -133,7 +133,19 @@ struct reader *readreader() {
             free(p);
             continue; // 跳过当前行
         }
-        p->readernumber = atoi(token);
+        //去掉bomb头
+        // p->readernumber = atoi( );
+        int j=0;
+        char format_token[30];
+        for (int i = 0; token[i] != '\0'; i++) {
+            if (isdigit(token[i])) {
+                format_token[j]=token[i];
+                j++;
+            }
+        }
+        format_token[j]='\0';
+
+        p->readernumber = atoi(format_token);
 
         // 读取单位
         token = strtok_s(NULL, " ", &nextToken);
@@ -336,7 +348,19 @@ struct borrow *readborrow() {
             free(p);
             continue; // 跳过当前行
         }
-        p->readernumber = atoi(token);
+        //去掉bomb头
+        // p->readernumber = atoi( );
+        int j=0;
+        char format_token[30];
+        for (int i = 0; token[i] != '\0'; i++) {
+            if (isdigit(token[i])) {
+                format_token[j]=token[i];
+                j++;
+            }
+        }
+        format_token[j]='\0';
+
+        p->readernumber = atoi(format_token);
 
         // 读取图书编号
         token = strtok_s(NULL, " ", &nextToken);

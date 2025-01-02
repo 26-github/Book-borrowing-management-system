@@ -113,7 +113,6 @@ void bookmain() {
 
         }
         booksmune();
-        clearInputBuffer();
         choice = getValidChoice();
     }
     printf("\t退出成功！\n");
@@ -835,7 +834,19 @@ struct books* readbooks() {
             free(p);
             continue; // 跳过当前行
         }
-        p->number = atoi(token);
+        //去掉bomb头
+        // p->readernumber = atoi( );
+        int j=0;
+        char format_token[30];
+        for (int i = 0; token[i] != '\0'; i++) {
+            if (isdigit(token[i])) {
+                format_token[j]=token[i];
+                j++;
+            }
+        }
+        format_token[j]='\0';
+
+        p->number = atoi(format_token);
 
         // 读取ISBN
         token = strtok_s(NULL, " ", &nextToken);
